@@ -24,8 +24,8 @@ This repository follows the same deployment setup as `kylescudder.co.uk`:
 
 - Netlify's Git integration handles deployments; no checked-in GitHub Actions
   workflow is required.
-- Netlify automatically detects Astro and uses `astro build` with `dist/` as
-  the publish directory.
+- `netlify.toml` pins the Astro build command and `dist/` publish directory so
+  deploys do not depend on framework detection timing.
 - Netlify's build-provided `URL` is used as Astro's production site URL.
 - The repository keeps `bun.lock` as its single dependency lockfile, matching
   the portfolio repository.
