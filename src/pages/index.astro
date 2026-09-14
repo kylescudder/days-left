@@ -105,7 +105,8 @@ const targetLabel = '4:00pm UK time on Friday, 29 January 2027';
     </main>
 
     <script>
-      const target = new Date('2027-01-29T16:00:00Z').getTime();
+      import { getCountdownValues } from '../lib/countdown';
+
       const elements = {
         days: document.querySelector('#days'),
         hours: document.querySelector('#hours'),
@@ -114,13 +115,7 @@ const targetLabel = '4:00pm UK time on Friday, 29 January 2027';
       };
 
       function updateCountdown() {
-        const distance = Math.max(0, target - Date.now());
-        const values = {
-          days: Math.floor(distance / 86_400_000),
-          hours: Math.floor((distance % 86_400_000) / 3_600_000),
-          minutes: Math.floor((distance % 3_600_000) / 60_000),
-          seconds: Math.floor((distance % 60_000) / 1_000),
-        };
+        const { distance, ...values } = getCountdownValues();
 
         Object.entries(values).forEach(([key, value]) => {
           const el = elements[key as keyof typeof elements];
@@ -211,8 +206,9 @@ const targetLabel = '4:00pm UK time on Friday, 29 January 2027';
     padding: 54px 0 46px;
     display: grid;
     grid-template-columns: .87fr 1.13fr;
-    grid-template-rows: auto auto 1fr;
+    grid-template-rows: auto auto auto;
     column-gap: clamp(48px, 7vw, 110px);
+    align-content: center;
     align-items: center;
   }
 
