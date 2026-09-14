@@ -35,4 +35,5 @@ branch for production. After that, deployments happen automatically from GitHub.
 
 ## Framed photo
 
-The nursery frame uses `public/images/otter-family.png`.
+The nursery frame uses `src/assets/otter-family.png`, processed into responsive
+WebP variants by Astro at build time.

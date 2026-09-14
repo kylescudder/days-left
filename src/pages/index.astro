@@ -1,4 +1,7 @@
 ---
+import { Image } from 'astro:assets';
+import otterFamily from '../assets/otter-family.png';
+
 const targetLabel = '4:00pm UK time on Friday, 29 January 2027';
 ---
 
@@ -26,7 +29,15 @@ const targetLabel = '4:00pm UK time on Friday, 29 January 2027';
             <span class="tape tape--two" aria-hidden="true"></span>
             <figure class="frame">
               <div class="mat">
-                <img src="/images/otter-family.png" alt="Two parent otters floating with their baby" />
+                <Image
+                  src={otterFamily}
+                  alt="Two parent otters floating with their baby"
+                  widths={[240, 340, 480, 680]}
+                  sizes="(max-width: 500px) 72vw, 340px"
+                  quality={80}
+                  loading="eager"
+                  fetchpriority="high"
+                />
               </div>
             </figure>
             <p class="frame-note">our little family is waiting</p>
@@ -54,7 +65,7 @@ const targetLabel = '4:00pm UK time on Friday, 29 January 2027';
 
         <section class="countdown-card" aria-label={`Countdown to ${targetLabel}`}>
           <span class="stitch stitch--top" aria-hidden="true"></span>
-          <div class="countdown" role="timer" aria-live="polite">
+          <div class="countdown" role="timer">
             <div class="time-unit">
               <strong id="days">---</strong>
               <span>days</span>
@@ -76,6 +87,7 @@ const targetLabel = '4:00pm UK time on Friday, 29 January 2027';
             </div>
           </div>
           <p class="date"><span aria-hidden="true">✦</span> until {targetLabel} <span aria-hidden="true">✦</span></p>
+          <p id="countdown-status" class="sr-only" role="status" aria-live="polite"></p>
           <span class="stitch stitch--bottom" aria-hidden="true"></span>
         </section>
 
@@ -118,6 +130,7 @@ const targetLabel = '4:00pm UK time on Friday, 29 January 2027';
         if (distance === 0) {
           document.querySelector('.countdown-card')?.classList.add('is-finished');
           document.querySelector('.date')!.textContent = 'You made it — maternity leave begins!';
+          document.querySelector('#countdown-status')!.textContent = 'You made it — maternity leave begins!';
         }
       }
 
@@ -140,6 +153,18 @@ const targetLabel = '4:00pm UK time on Friday, 29 January 2027';
   }
 
   * { box-sizing: border-box; }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 
   html { min-width: 320px; background: var(--cream); }
 
