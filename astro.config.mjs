@@ -1,5 +1,5 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://days-left.example.com',
+  site: process.env.URL ?? 'http://localhost:4321',
 });
