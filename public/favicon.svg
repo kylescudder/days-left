@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Baby otter">
+  <rect width="64" height="64" rx="16" fill="#d9f1ed"/>
+  <path d="M3 15c8-6 14-3 21-8M41 5c8 1 14 5 20 11M2 51c8-6 13-5 19-1M46 55c6-3 10-2 16 2" fill="none" stroke="#60b7b0" stroke-width="3" stroke-linecap="round" opacity=".75"/>
+
+  <circle cx="18" cy="25" r="8" fill="#d39b79"/>
+  <circle cx="46" cy="25" r="8" fill="#d39b79"/>
+  <circle cx="18" cy="25" r="4" fill="#3b302b"/>
+  <circle cx="46" cy="25" r="4" fill="#3b302b"/>
+
+  <path d="M10 39c0-17 9-27 22-27s22 10 22 27c0 13-9 21-22 21S10 52 10 39Z" fill="#d9a17f"/>
+  <path d="M12 38 7 43l7 2-3 6 8-1m33-12 5 5-7 2 3 6-8-1" fill="#d9a17f"/>
+
+  <ellipse cx="24" cy="34" rx="3.5" ry="5" fill="#272523"/>
+  <ellipse cx="40" cy="34" rx="3.5" ry="5" fill="#272523"/>
+  <ellipse cx="32" cy="43" rx="9" ry="7" fill="#efd0b4"/>
+  <path d="M25 41c0-4 3-7 7-7s7 3 7 7c0 4-3 7-7 7s-7-3-7-7Z" fill="#1f2220"/>
+  <path d="M32 47v3m0 0c-2 3-5 3-7 0m7 0c2 3 5 3 7 0" fill="none" stroke="#1f2220" stroke-width="2.4" stroke-linecap="round"/>
+</svg>
