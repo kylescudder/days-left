@@ -5,3 +5,10 @@ dist/
 .DS_Store
 playwright-report/
 test-results/
+
+.env*
+secrets/
+state/
+backups/
+deploy-spool/
+__pycache__/
