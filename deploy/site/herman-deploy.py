@@ -124,6 +124,31 @@ def start(image):
     compose('up', '-d', '--no-build', '--pull', 'never', '--wait', '--wait-timeout', '120', 'days-left', image=image)
 
 
+def verify(image):
+    html = compose('exec', '-T', 'days-left', 'wget', '-qO-', 'http://127.0.0.1:8080/', image=image).decode()
+    if 'Nearly there,' not in html or 'countdown-card' not in html:
+        raise Error('Site content verification failed.')
+    assets = set(re.findall(r'(?:src|href)="(/(?:_astro/|favicon)[^"]+)"', html))
+    if not assets or not any(asset.endswith('.webp') for asset in assets):
+        raise Error('Expected built site assets were missing.')
+    for asset in sorted(assets):
+        compose('exec', '-T', 'days-left', 'wget', '-qO', '/dev/null',
+                'http://127.0.0.1:8080' + asset, image=image)
+
+
+def publish_status(image, revision):
+    directory = STATE / 'public'
+    directory.mkdir(mode=0o700, exist_ok=True)
+    save_json(directory / 'deployment.json', {'revision':revision, 'image':image})
+
+
+def inspect_current(container):
+    raw = run(['docker', 'inspect', '--format',
+               '{{json .Config.Image}}|{{json .State}}|{{json .Config.Labels}}', container])
+    image, state, labels = [json.loads(part) for part in raw.decode().strip().split('|', 2)]
+    return {'Config': {'Image': image, 'Labels': labels}, 'State': state}
+
+
 def deploy(digest, requested_revision=None):
     if not DIGEST.fullmatch(digest):
         raise Error('Use an exact sha256 digest.')
@@ -132,14 +157,16 @@ def deploy(digest, requested_revision=None):
     ids = compose('ps', '-a', '-q', 'days-left').decode().strip().splitlines()
     if len(ids) > 1:
         raise Error('Expected a single Days-Left container.')
-    current = json.loads(run(['docker', 'inspect', '--format', '{{json .}}', ids[0]])) if ids else None
+    current = inspect_current(ids[0]) if ids else None
     running = current['Config']['Image'] if current else None
     if running == candidate and current['State'].get('Health', {}).get('Status') == 'healthy':
         revision = (current['Config'].get('Labels') or {}).get('org.opencontainers.image.revision', '')
         if not REVISION.fullmatch(revision) or requested_revision and requested_revision != revision:
             raise Error('Running image revision does not match the request.')
         log('requested digest is already healthy')
+        verify(candidate)
         pin(candidate)
+        publish_status(candidate, revision)
         return
     log(f'verifying {candidate}')
     run(['gh', 'attestation', 'verify', f'oci://{candidate}', '--bundle-from-oci', '--repo', REPO,
@@ -153,11 +180,13 @@ def deploy(digest, requested_revision=None):
     log(f'provenance verified for {revision}')
     try:
         start(candidate)
+        verify(candidate)
     except Error:
         log('candidate failed health check')
         if running and running != candidate:
             try:
                 start(running)
+                verify(running)
                 pin(running)
                 log('previous image restored')
             except Error:
@@ -169,7 +198,8 @@ def deploy(digest, requested_revision=None):
     stamp = datetime.now(timezone.utc).isoformat()
     with (STATE / 'history.log').open('a') as stream:
         stream.write(f'{stamp} {candidate} {revision}\n')
-    save_json(STATE / 'deployment.json', {'deployed_at':stamp, 'image':candidate, 'revision':revision})
+    save_json(STATE / 'deployment.json', {'deployed_at':stamp, 'image':candidate, 'revision':revision, 'previous_image':running})
+    publish_status(candidate, revision)
     log(f'healthy on {candidate}')
 
 

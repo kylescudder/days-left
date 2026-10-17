@@ -13,6 +13,7 @@ const spool = process.env.SPOOL_DIR || "/spool";
 const port = Number(process.env.PORT || 9000);
 const maxBody = 1024;
 const maxSkewSeconds = 300;
+const deployedStateFile = process.env.DEPLOYED_STATE_FILE || "/release-state/deployment.json";
 
 const log = (message) => console.log(`[deploy-hook] ${new Date().toISOString()} ${message}`);
 const reply = (response, status, message) => {
@@ -37,6 +38,16 @@ function parseRequest(body) {
 
 createServer((request, response) => {
   if (request.method === "GET" && request.url === "/healthz") return reply(response, 200, "ok");
+  if (request.method === "GET" && request.url === "/hooks/days-left") {
+    let status = { status: "pending" };
+    try {
+      const value = JSON.parse(readFileSync(deployedStateFile, "utf8"));
+      if (/^[0-9a-f]{40}$/.test(value.revision) && /^ghcr\.io\/kylescudder\/days-left@sha256:[0-9a-f]{64}$/.test(value.image))
+        status = { status: "deployed", revision: value.revision, image: value.image };
+    } catch {}
+    response.writeHead(200, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "X-Days-Left-Deploy-Hook": "1" });
+    return response.end(JSON.stringify(status));
+  }
   if (request.method !== "POST" || request.url !== "/hooks/days-left") return reply(response, 404, "not found");
   const chunks = [];
   let size = 0;

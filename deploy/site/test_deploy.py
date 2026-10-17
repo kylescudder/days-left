@@ -25,6 +25,9 @@ class Deploy(unittest.TestCase):
         for f in ('.env',):
             p=self.app/f;p.write_text('DAYS_LEFT_IMAGE=fixture\n');p.chmod(0o600)
         self.calls=[]
+        self.verifier = patch.object(module, 'verify')
+        self.verifier.start()
+        self.patches.append(self.verifier)
 
     def tearDown(self):
         for p in reversed(self.patches):p.stop()
@@ -71,7 +74,7 @@ class Deploy(unittest.TestCase):
     def test_healthy_same_digest_requires_the_requested_revision(self):
         current={'Config':{'Image':module.IMAGE+'@'+D,'Labels':{'org.opencontainers.image.revision':R}},
                  'State':{'Running':True,'Health':{'Status':'healthy'}}}
-        with patch.object(module,'run',return_value=json.dumps(current).encode()),patch.object(module,'compose',self.fake_compose),patch.object(module,'start') as start:
+        with patch.object(module,'inspect_current',return_value=current),patch.object(module,'compose',self.fake_compose),patch.object(module,'start') as start:
             with self.assertRaises(module.Error):module.deploy(D,'c'*40)
             module.deploy(D,R)
             start.assert_not_called()
@@ -79,7 +82,7 @@ class Deploy(unittest.TestCase):
     def fake_run(self, args, **kwargs):
         self.calls.append(args)
         if args[:2]==['docker','inspect']:
-            return json.dumps({'Config':{'Image':'previous'},'State':{'Running':True,'Health':{'Status':'healthy'}}}).encode()
+            return b'"previous"|{"Running":true,"Health":{"Status":"healthy"}}|{}'
         if args[:3]==['docker','image','inspect']:
             return json.dumps({'org.opencontainers.image.revision':R}).encode()
         return b''
@@ -111,12 +114,19 @@ class Deploy(unittest.TestCase):
         self.assertFalse((module.STATE/'history.log').exists())
         self.assertIn('DAYS_LEFT_IMAGE=previous',(self.app/'.env').read_text())
 
+    def test_failed_acceptance_never_publishes_status(self):
+        with patch.object(module,'run',self.fake_run),patch.object(module,'compose',self.fake_compose),patch.object(module,'start'),patch.object(module,'verify',side_effect=[module.Error('assets missing'),None]):
+            with self.assertRaises(module.Error):module.deploy(D,R)
+        self.assertFalse((module.STATE/'public/deployment.json').exists())
+        self.assertIn('DAYS_LEFT_IMAGE=previous',(self.app/'.env').read_text())
+
     def test_success_is_pinned_and_new_arrival_remains_queued(self):
         def start(image):self.queue('arriving.json',30)
         with patch.object(module,'run',self.fake_run),patch.object(module,'compose',self.fake_compose),patch.object(module,'start',start):module.deploy(D,R)
         self.assertIn(module.IMAGE+'@'+D,(self.app/'.env').read_text())
         self.assertTrue((module.STATE/'history.log').exists())
         self.assertTrue((module.REQUESTS/'arriving.json').exists())
+        self.assertEqual(json.loads((module.STATE/'public/deployment.json').read_text()), {'image':module.IMAGE+'@'+D,'revision':R})
 
 
 if __name__=='__main__':unittest.main()

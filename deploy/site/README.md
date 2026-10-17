@@ -20,7 +20,9 @@ Docker socket, host port or database access.
 LaunchAgent `com.herman.days-left-deploy` consumes requests as the Colima owner.
 It verifies GitHub provenance from this repository's `deploy-site.yml`, main and
 GitHub-hosted runners before pulling an image. Failed health checks restore the
-previous image. GitHub checks the public revision after CD.
+previous image. Herman checks the built page and its CSS/image assets before publishing a completed
+acceptance record. GitHub waits for that record to match both the image digest and
+commit, as well as the public revision. A responding candidate alone cannot pass CD.
 
 ## Configuration
 
@@ -48,3 +50,19 @@ Pause with `gh variable set DEPLOY_ENABLED --body false --repo kylescudder/days-
 The manual digest command also verifies provenance and can restore a prior release.
 Host deployment tooling changes require an explicit checkout update; routine site
 releases are images. Kyle's login session and Colima must be running.
+
+## Migration acceptance
+
+Netlify project `days-left-kr` was deleted on 16 October 2026; its hostname returns
+404. The original DNS record is historical evidence only and must not be restored:
+recover using a retained Herman image or rebuild the recorded revision. This is a
+static site with no database, external authentication or Convex project to retire.
+The platform backup automatically includes this app's private deployment credentials,
+Compose files, host deploy tooling and release state; source and images are rebuilt
+from GitHub. The Sunday 03:00 encrypted NAS schedule remains unchanged.
+
+The 17 October acceptance test changes the footer from “One day at a time. You've
+got this.” to “One day closer to our sweetest chapter.” and exercises a real main
+push through CI, provenance, Cloudflare delivery and completed host acceptance.
+Before/after screenshots and final results are recorded under the platform's
+`verification/days-left-deployment.json` and `verification/days-left-cicd/`.

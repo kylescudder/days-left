@@ -13,13 +13,17 @@ test('receiver enforces signature, timestamp, size, exact path and queue limit',
   for(const sub of ['tmp','requests']) mkdirSync(join(directory,sub));
   writeFileSync(join(directory,'secret'),secret,{mode:0o600});
   const child=spawn(process.execPath,[fileURLToPath(new URL('./server.mjs',import.meta.url))],
-    {env:{...process.env,WEBHOOK_SECRET_FILE:join(directory,'secret'),SPOOL_DIR:directory,PORT:'19000'},stdio:['ignore','pipe','pipe']});
+    {env:{...process.env,WEBHOOK_SECRET_FILE:join(directory,'secret'),SPOOL_DIR:directory,PORT:'19000',DEPLOYED_STATE_FILE:join(directory,'accepted.json')},stdio:['ignore','pipe','pipe']});
   try{
     await new Promise((resolve,reject)=>{
       const timer=setTimeout(()=>reject(new Error('Receiver failed to listen')),5000);
       child.stdout.on('data',d=>{if(d.toString().includes('listening')){clearTimeout(timer);resolve();}});
       child.once('exit',()=>{clearTimeout(timer);reject(new Error('Receiver exited'));});
     });
+    const statusUrl='http://127.0.0.1:19000/hooks/days-left';
+    assert.deepEqual(await fetch(statusUrl).then(r=>r.json()),{status:'pending'});
+    writeFileSync(join(directory,'accepted.json'),JSON.stringify({revision:'b'.repeat(40),image:'ghcr.io/kylescudder/days-left@sha256:'+'a'.repeat(64),private:'must not be returned'}));
+    assert.deepEqual(await fetch(statusUrl).then(r=>r.json()),{status:'deployed',revision:'b'.repeat(40),image:'ghcr.io/kylescudder/days-left@sha256:'+'a'.repeat(64)});
     const value={digest:'sha256:'+'a'.repeat(64),revision:'b'.repeat(40),timestamp:Math.floor(Date.now()/1000)};
     const send=async(body,signature,path='/hooks/days-left')=>fetch('http://127.0.0.1:19000'+path,
       {method:'POST',body,headers:{'X-Days-Left-Signature':signature}});
