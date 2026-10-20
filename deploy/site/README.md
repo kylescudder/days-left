@@ -1,9 +1,16 @@
-# Days Left on Herman
+# Days Left on the host
 
 Checkout: `/Users/kyle/platform/apps/days-left`.
 Public site: `https://days-left.kylescudder.co.uk`.
 Upstream: `days-left:8080` on `platform-web`, with no host ports or database.
 Static Astro output runs in an unprivileged Caddy container.
+
+## Deployer
+
+`deploy/site/host-deploy.py` holds this app's settings and hooks; the
+shared flow is `deploy/site/deploy_core.py`, vendored unchanged from
+`kylescudder/deploy-core` (see `deploy/site/deploy_core.lock`). Change the core
+there and sync it; CI fails if the vendored copy is edited here.
 
 ## Release pipeline
 
@@ -17,10 +24,10 @@ Cloudflare Access protects `deploy-days-left.kylescudder.co.uk` using the dedica
 receiver. Its HMAC-signed requests enter a bounded queue; the receiver has no
 Docker socket, host port or database access.
 
-LaunchAgent `com.herman.days-left-deploy` consumes requests as the Colima owner.
+LaunchAgent `com.kylescudder.days-left-deploy` consumes requests as the Colima owner.
 It verifies GitHub provenance from this repository's `deploy-site.yml`, main and
 GitHub-hosted runners before pulling an image. Failed health checks restore the
-previous image. Herman checks the built page and its CSS/image assets before publishing a completed
+previous image. The host checks the built page and its CSS/image assets before publishing a completed
 acceptance record. GitHub waits for that record to match both the image digest and
 commit, as well as the public revision. A responding candidate alone cannot pass CD.
 
@@ -40,10 +47,10 @@ are mode 0600 and private directories 0700. Deployment state is under `state/`.
 
 ```sh
 docker compose -f deploy/site/compose.deploy-hook.yaml --env-file .env.deploy-hook up -d --wait
-python3 -B deploy/site/install-launchd.py
-launchctl print gui/501/com.herman.days-left-deploy
+python3 -B deploy/site/host-deploy.py --install <host LocalHostName>
+launchctl print gui/501/com.kylescudder.days-left-deploy
 tail -n 100 state/deploy.log
-./deploy/site/herman-deploy.sh sha256:<verified-main-digest>
+./deploy/site/host-deploy.sh sha256:<verified-main-digest>
 ```
 
 Pause with `gh variable set DEPLOY_ENABLED --body false --repo kylescudder/days-left`.
@@ -55,7 +62,7 @@ releases are images. Kyle's login session and Colima must be running.
 
 Netlify project `days-left-kr` was deleted on 16 October 2026; its hostname returns
 404. The original DNS record is historical evidence only and must not be restored:
-recover using a retained Herman image or rebuild the recorded revision. This is a
+recover using a retained the host image or rebuild the recorded revision. This is a
 static site with no database, external authentication or Convex project to retire.
 The platform backup automatically includes this app's private deployment credentials,
 Compose files, host deploy tooling and release state; source and images are rebuilt
