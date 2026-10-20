@@ -22,7 +22,7 @@ Static Astro output runs in an unprivileged Caddy container.
 
 ## Deployer
 
-`application hooks` holds this app's settings and hooks; the
+Application-specific behavior is in `hooks.py`; deployment definitions are central.
 
 ## Release pipeline
 
