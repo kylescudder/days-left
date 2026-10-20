@@ -15,10 +15,10 @@ bun run test:e2e
 
 ## Production
 
-https://days-left.kylescudder.co.uk is hosted on Herman behind Cloudflare Tunnel.
+https://days-left.kylescudder.co.uk is hosted on the host behind Cloudflare Tunnel.
 Pull requests run CI. Every main push runs CI, builds AMD64 and ARM64 images,
 publishes an immutable GHCR digest with GitHub provenance, and sends a signed
-request through Cloudflare Access. Herman independently verifies the main workflow
+request through Cloudflare Access. The host independently verifies the main workflow
 attestation and revision before deploying, with automatic health-check rollback.
 See [deployment operations](deploy/site/README.md).
 
