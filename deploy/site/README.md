@@ -1,5 +1,20 @@
 # Days Left on the host
 
+## Shared deployment service
+
+This app is registered as `days-left` in the central deployment registry
+`/Users/kyle/platform/deploy-core/apps.json`. LaunchAgent
+`com.kylescudder.deploy-core` runs the single installed engine. Application hooks
+are `deploy/site/hooks.py`; the receiver, credentials, queues,
+state and database contracts below remain app-specific. Manual deployment uses
+`./deploy/site/host-deploy.sh sha256:<digest>`.
+
+Engine updates, application registration, failure inspection and service rollback
+are documented in [deploy-core](https://github.com/kylescudder/deploy-core).
+There are no vendored engine files, lock files or sync PRs. Do not install an
+app-specific LaunchAgent. Apply future engine changes once through the central service.
+
+
 Checkout: `/Users/kyle/platform/apps/days-left`.
 Public site: `https://days-left.kylescudder.co.uk`.
 Upstream: `days-left:8080` on `platform-web`, with no host ports or database.
@@ -7,10 +22,7 @@ Static Astro output runs in an unprivileged Caddy container.
 
 ## Deployer
 
-`deploy/site/host-deploy.py` holds this app's settings and hooks; the
-shared flow is `deploy/site/deploy_core.py`, vendored unchanged from
-`kylescudder/deploy-core` (see `deploy/site/deploy_core.lock`). Change the core
-there and sync it; CI fails if the vendored copy is edited here.
+Application-specific behavior is in `hooks.py`; deployment definitions are central.
 
 ## Release pipeline
 
@@ -24,7 +36,7 @@ Cloudflare Access protects `deploy-days-left.kylescudder.co.uk` using the dedica
 receiver. Its HMAC-signed requests enter a bounded queue; the receiver has no
 Docker socket, host port or database access.
 
-LaunchAgent `com.kylescudder.days-left-deploy` consumes requests as the Colima owner.
+LaunchAgent `com.kylescudder.deploy-core` consumes requests as the Colima owner.
 It verifies GitHub provenance from this repository's `deploy-site.yml`, main and
 GitHub-hosted runners before pulling an image. Failed health checks restore the
 previous image. The host checks the built page and its CSS/image assets before publishing a completed
@@ -47,8 +59,7 @@ are mode 0600 and private directories 0700. Deployment state is under `state/`.
 
 ```sh
 docker compose -f deploy/site/compose.deploy-hook.yaml --env-file .env.deploy-hook up -d --wait
-python3 -B deploy/site/host-deploy.py --install <host LocalHostName>
-launchctl print gui/501/com.kylescudder.days-left-deploy
+launchctl print gui/501/com.kylescudder.deploy-core
 tail -n 100 state/deploy.log
 ./deploy/site/host-deploy.sh sha256:<verified-main-digest>
 ```
