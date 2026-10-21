@@ -4,6 +4,9 @@ test('centers the complete composition on a desktop viewport', async ({ page }) 
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
+  // The entrance animations hold each block 14px low until its delay ends, and reduced
+  // motion only shortens their duration. Measure the settled layout, not the mid-entrance one.
+  await page.evaluate(() => Promise.all(document.getAnimations().map(({ finished }) => finished)));
 
   const bounds = await page.locator('.intro, .countdown-card, footer').evaluateAll((elements) => {
     const boxes = elements.map((element) => element.getBoundingClientRect());
