@@ -19,7 +19,7 @@ env:
 
 jobs:
   ci:
-    uses: ./.github/workflows/site-ci.yml
+    uses: ./.github/workflows/ci.yml
 
   build:
     needs: ci
@@ -179,7 +179,7 @@ jobs:
           CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
           CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
         run: |
-          for attempt in $(seq 60); do
+          for _attempt in $(seq 60); do
             accepted=$(curl --fail --silent --max-time 10 \
               -H "CF-Access-Client-Id: $CF_ACCESS_CLIENT_ID" \
               -H "CF-Access-Client-Secret: $CF_ACCESS_CLIENT_SECRET" "$DEPLOY_URL" \
