@@ -1,4 +1,4 @@
-FROM oven/bun:1.4.3@sha256:ec06c3b6cea04192ae6770c434f668ca41d343ad19fa6472216c7b48be39c598 AS build
+FROM oven/bun:1.4.4@sha256:1d22548f177f4ff38e0c15baa3c2c46c6c2060ba2d1bc573bb4720b407548f1d AS build
 WORKDIR /app
 COPY package.json bun.lock ./
 RUN BUN_CONFIG_MAX_HTTP_REQUESTS=16 bun install --frozen-lockfile
@@ -8,7 +8,7 @@ COPY public ./public
 ENV URL=https://days-left.kylescudder.co.uk
 RUN bun run build
 
-FROM caddy:2.11.7@sha256:8dc9fa87b36b25303d1c67d2a09f5824b7f3bfd72cb052f246e5da2133fe29a8
+FROM caddy:2.11.7@sha256:504a44d7d74bd2bc28a66afc4774912fc21223ca8a67734af1c54ab2f999b489
 # Port 8080 needs no privileged bind capability; drop the upstream file capability
 # so the binary can execute with the runtime capability set empty.
 RUN setcap -r /usr/bin/caddy
