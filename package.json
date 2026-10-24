@@ -6,9 +6,12 @@
   "scripts": {
     "dev": "astro dev --host 0.0.0.0 --port 4321",
     "build": "astro build",
-    "test:e2e": "playwright test",
     "preview": "astro preview",
-    "start": "astro dev --host 0.0.0.0 --port 4321"
+    "typecheck": "astro check",
+    "test": "bun test src/lib/countdown.test.ts",
+    "test:e2e": "playwright test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -17,6 +20,8 @@
   },
   "devDependencies": {
     "@playwright/test": "1.64.1",
-    "@types/node": "^26.5.1"
+    "@types/node": "^26.5.1",
+    "prettier": "3.7.4",
+    "prettier-plugin-astro": "1.1.1"
   }
 }
