@@ -1,0 +1,16 @@
+node_modules
+dist
+coverage
+bun.lock
+secrets
+state
+backups
+deploy-spool
+# Vendored into deploy-core, which pins this file by hash
+deploy/site/receiver
+# Astro, Netlify and Playwright
+.astro
+.netlify
+.env*
+playwright-report
+test-results

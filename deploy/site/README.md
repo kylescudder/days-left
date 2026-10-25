@@ -14,7 +14,6 @@ are documented in [deploy-core](https://github.com/kylescudder/deploy-core).
 There are no vendored engine files, lock files or sync PRs. Do not install an
 app-specific LaunchAgent. Apply future engine changes once through the central service.
 
-
 Checkout: `/Users/kyle/platform/apps/days-left`.
 Public site: `https://days-left.kylescudder.co.uk`.
 Upstream: `days-left:8080` on `platform-web`, with no host ports or database.
@@ -71,8 +70,7 @@ releases are images. Kyle's login session and Colima must be running.
 
 ## Migration acceptance
 
-Netlify project `days-left-kr` was deleted on 16 October 2026; its hostname returns
-404. The original DNS record is historical evidence only and must not be restored:
+Netlify project `days-left-kr` was deleted on 16 October 2026; its hostname returns 404. The original DNS record is historical evidence only and must not be restored:
 recover using a retained the host image or rebuild the recorded revision. This is a
 static site with no database, external authentication or Convex project to retire.
 The platform backup automatically includes this app's private deployment credentials,

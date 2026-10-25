@@ -13,9 +13,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
-      - name: Build, typecheck and test countdown
+      - name: Typecheck, build, test and check formatting
         run: |
-          docker run --rm -v "$PWD:/app" -w /app oven/bun:1.3.14@sha256:e10577f0db68676a7024391c6e5cb4b879ebd17188ab750cf10024a6d700e5c4 sh -c 'bun install --frozen-lockfile && bun run build && bun x astro check && bun test src/lib/countdown.test.ts'
+          docker run --rm -v "$PWD:/app" -w /app oven/bun:1.3.14@sha256:e10577f0db68676a7024391c6e5cb4b879ebd17188ab750cf10024a6d700e5c4 sh -c 'bun install --frozen-lockfile && bun run typecheck && bun run build && bun run test && bun run format:check'
       - name: Deployment verification and rollback tests
         run: python3 -B -m unittest discover -s deploy/site -p 'test_*.py'
       - name: Webhook authentication and queue tests

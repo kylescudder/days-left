@@ -1,11 +1,11 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig } from '@playwright/test'
 
-const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://127.0.0.1:4321';
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://127.0.0.1:4321'
 
 export default defineConfig({
   testDir: './tests',
   use: {
-    baseURL,
+    baseURL
   },
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
@@ -13,6 +13,6 @@ export default defineConfig({
         command: 'bun run dev',
         url: baseURL,
         reuseExistingServer: true,
-        timeout: 30_000,
-      },
-});
+        timeout: 30_000
+      }
+})

@@ -1,14 +1,7 @@
 [
   [
     "compose",
-    [
-      "exec",
-      "-T",
-      "days-left",
-      "wget",
-      "-qO-",
-      "http://127.0.0.1:8080/"
-    ],
+    ["exec", "-T", "days-left", "wget", "-qO-", "http://127.0.0.1:8080/"],
     "ghcr.io/kylescudder/days-left@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
   ],
   [
