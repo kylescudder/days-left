@@ -5,10 +5,11 @@
 }
 :8080 {
     encode zstd gzip
+    header X-Days-Left-Revision {$DAYS_LEFT_REVISION}
     handle /healthz {
         header Cache-Control no-store
-        header X-Days-Left-Revision {$DAYS_LEFT_REVISION}
-        respond "ok" 200
+        header Content-Type application/json
+        respond `{"ok":true,"revision":"{$DAYS_LEFT_REVISION}"}` 200
     }
     handle {
         root * /srv
