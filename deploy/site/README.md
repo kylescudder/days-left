@@ -27,7 +27,7 @@ Application-specific behavior is in `hooks.py`; deployment definitions are centr
 
 `.github/workflows/ci.yml` checks types, countdown logic, production build,
 webhook authentication, provenance rejection and rollback, and container startup.
-`deploy-site.yml` builds both architectures, publishes `ghcr.io/kylescudder/days-left`
+`release.yml` builds both architectures, publishes `ghcr.io/kylescudder/days-left`
 and provenance, then requests CD using its immutable digest and commit revision.
 
 Cloudflare Access protects `deploy-days-left.kylescudder.co.uk` using the dedicated
@@ -36,7 +36,7 @@ receiver. Its HMAC-signed requests enter a bounded queue; the receiver has no
 Docker socket, host port or database access.
 
 LaunchAgent `com.kylescudder.deploy-core` consumes requests as the Colima owner.
-It verifies GitHub provenance from this repository's `deploy-site.yml`, main and
+It verifies GitHub provenance from this repository's `release.yml`, main and
 GitHub-hosted runners before pulling an image. Failed health checks restore the
 previous image. The host checks the built page and its CSS/image assets before publishing a completed
 acceptance record. GitHub waits for that record to match both the image digest and
