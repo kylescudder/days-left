@@ -13,7 +13,7 @@ test('centers the complete composition on a desktop viewport', async ({
   )
 
   const bounds = await page
-    .locator('.intro, .countdown-card, footer')
+    .locator('header, #countdown-card, footer')
     .evaluateAll((elements) => {
       const boxes = elements.map((element) => element.getBoundingClientRect())
 
