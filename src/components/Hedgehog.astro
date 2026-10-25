@@ -1,0 +1,14 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+
+type Props = HTMLAttributes<'div'>
+
+const { class: className, ...attrs } = Astro.props
+---
+
+<div class:list={['absolute h-[42px] w-[70px]', className]} {...attrs}>
+  <span class='absolute inset-y-0 right-[18px] left-0 rounded-[65%_55%_15%_25%] bg-brown [clip-path:polygon(0_48%,8%_22%,16%_34%,26%_8%,35%_29%,49%_0,56%_27%,70%_5%,72%_34%,91%_23%,86%_51%,100%_65%,94%_100%,12%_100%)]'></span>
+  <span class='absolute right-1 bottom-0 h-[31px] w-[42px] rotate-3 rounded-[70%_80%_50%_60%] bg-[#c09a72]'></span>
+  <i class='absolute right-[19px] bottom-[17px] size-1 rounded-[50%] bg-[#302821]'></i>
+  <i class='absolute right-0 bottom-2.5 h-1.5 w-[7px] rounded-[50%] bg-[#302821]'></i>
+</div>
