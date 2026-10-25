@@ -25,7 +25,7 @@ Application-specific behavior is in `hooks.py`; deployment definitions are centr
 
 ## Release pipeline
 
-`.github/workflows/site-ci.yml` checks types, countdown logic, production build,
+`.github/workflows/ci.yml` checks types, countdown logic, production build,
 webhook authentication, provenance rejection and rollback, and container startup.
 `deploy-site.yml` builds both architectures, publishes `ghcr.io/kylescudder/days-left`
 and provenance, then requests CD using its immutable digest and commit revision.

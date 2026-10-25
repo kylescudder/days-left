@@ -1,5 +1,5 @@
 {
-  "name": "days-until-leave",
+  "name": "days-left",
   "type": "module",
   "version": "0.0.1",
   "private": true,
@@ -11,7 +11,8 @@
     "test": "bun test src/lib/countdown.test.ts",
     "test:e2e": "playwright test",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "prepare": "husky"
   },
   "dependencies": {
     "@astrojs/check": "0.9.12",
@@ -21,7 +22,13 @@
   "devDependencies": {
     "@playwright/test": "1.64.1",
     "@types/node": "24.19.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
     "prettier": "3.9.10",
     "prettier-plugin-astro": "1.1.2"
-  }
+  },
+  "lint-staged": {
+    "*": "prettier --check --ignore-unknown"
+  },
+  "license": "MIT"
 }

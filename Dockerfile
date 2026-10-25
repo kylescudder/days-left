@@ -1,5 +1,6 @@
 FROM oven/bun:1.4.4@sha256:1d22548f177f4ff38e0c15baa3c2c46c6c2060ba2d1bc573bb4720b407548f1d AS build
 WORKDIR /app
+ENV HUSKY=0
 COPY package.json bun.lock ./
 RUN BUN_CONFIG_MAX_HTTP_REQUESTS=16 bun install --frozen-lockfile
 COPY astro.config.mjs tsconfig.json ./
