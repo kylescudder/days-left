@@ -50,3 +50,27 @@ test('keeps the family photo in proportion on a portrait viewport', async ({
   expect(dimensions.renderedRatio).toBeCloseTo(dimensions.naturalRatio, 2)
   await expect(photo).toBeInViewport({ ratio: 1 })
 })
+
+test('shows the live countdown on a phone viewport without horizontal scrolling', async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+
+  const timer = page.getByRole('timer')
+  await expect(timer).toBeVisible()
+  // Units start as placeholders; the script replaces them with numbers once it runs.
+  await expect(timer.locator('strong').first()).toHaveText(/^\d+$/)
+
+  const card = await page.locator('#countdown-card').boundingBox()
+  expect(card).not.toBeNull()
+  expect(card!.x).toBeGreaterThanOrEqual(0)
+  expect(card!.x + card!.width).toBeLessThanOrEqual(390)
+
+  const overflow = await page.evaluate(
+    () =>
+      document.documentElement.scrollWidth -
+      document.documentElement.clientWidth
+  )
+  expect(overflow).toBeLessThanOrEqual(0)
+})
