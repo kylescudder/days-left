@@ -58,6 +58,7 @@ test('shows the live countdown on a phone viewport without horizontal scrolling'
   page
 }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 })
+  await page.clock.setFixedTime(new Date('2026-09-15T12:00:00Z'))
   await page.goto('/')
 
   const timer = page.getByRole('timer')
