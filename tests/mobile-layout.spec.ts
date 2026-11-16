@@ -1,26 +1,5 @@
-import { expect, test, type Page, type TestInfo } from '@playwright/test'
-
-// Waits for the entrance animations to finish so the captured layout is the settled one.
-const settle = (page: Page) =>
-  page.evaluate(() =>
-    Promise.all(document.getAnimations().map(({ finished }) => finished))
-  )
-
-// Captures the settled state as a PNG attached to the test, before any assertion can fail.
-// The Astro dev toolbar is a development-only overlay, so it is hidden for the capture only.
-const attachScreenshot = async (
-  page: Page,
-  testInfo: TestInfo,
-  name: string
-) => {
-  await settle(page)
-  await page.addStyleTag({
-    content: 'astro-dev-toolbar { display: none !important; }'
-  })
-  const path = testInfo.outputPath(`${name}.png`)
-  await page.screenshot({ path, fullPage: true })
-  await testInfo.attach(name, { path, contentType: 'image/png' })
-}
+import { expect, test } from '@playwright/test'
+import { attachScreenshot, settle } from './support/evidence'
 
 test('centers the complete composition on a desktop viewport', async ({
   page
