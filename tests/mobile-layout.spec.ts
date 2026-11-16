@@ -5,6 +5,7 @@ test('centers the complete composition on a desktop viewport', async ({
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.setViewportSize({ width: 1440, height: 900 })
+  await page.clock.setFixedTime(new Date('2026-09-15T12:00:00Z'))
   await page.goto('/')
   // The entrance animations hold each block 14px low until its delay ends, and reduced
   // motion only shortens their duration. Measure the settled layout, not the mid-entrance one.
@@ -31,6 +32,7 @@ test('keeps the family photo in proportion on a portrait viewport', async ({
   page
 }) => {
   await page.setViewportSize({ width: 430, height: 932 })
+  await page.clock.setFixedTime(new Date('2026-09-15T12:00:00Z'))
   await page.goto('/')
 
   const photo = page.getByAltText('Two parent otters floating with their baby')
