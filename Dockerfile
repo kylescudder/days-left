@@ -9,7 +9,7 @@ COPY public ./public
 ENV URL=https://days-left.kylescudder.co.uk
 RUN bun run build
 
-FROM caddy:2.11.7@sha256:504a44d7d74bd2bc28a66afc4774912fc21223ca8a67734af1c54ab2f999b489
+FROM caddy:2.11.9@sha256:4851e54a46b206517c574821bb5cc67f170d2156041e9fbc4c9193b45e84a75b
 # Port 8080 needs no privileged bind capability; drop the upstream file capability
 # so the binary can execute with the runtime capability set empty.
 RUN setcap -r /usr/bin/caddy
