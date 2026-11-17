@@ -19,4 +19,7 @@ ARG DAYS_LEFT_REVISION=development
 ENV DAYS_LEFT_REVISION=${DAYS_LEFT_REVISION}
 USER 1000:1000
 EXPOSE 8080
+# Health ownership: deploy/healthcheck.md at the repository root.
+HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget --quiet --spider --timeout=3 http://127.0.0.1:8080/healthz
 CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
